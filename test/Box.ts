@@ -33,6 +33,8 @@ describe.only("Box (Proxy)", function () {
     this.box = await upgrades.deployProxy(this.Box, [42], {
       initializer: "store",
     });
+    await this.box.waitForDeployment();
+    console.log('Box Proxy deployed to:', await this.box.getAddress());
   });
 
   // Test case
