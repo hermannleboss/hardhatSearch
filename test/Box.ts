@@ -1,6 +1,7 @@
 import { ethers, upgrades } from "hardhat";
 import { expect } from "chai";
 
+// Default installation
 describe("Box", function () {
   before(async function () {
     this.Box = await ethers.getContractFactory("Box");
@@ -22,7 +23,8 @@ describe("Box", function () {
   });
 });
 
-describe.only("Box (Proxy)", function () {
+// Transparent installation
+describe("Box (Proxy)", function () {
   before(async function () {
     this.Box = await ethers.getContractFactory("Box");
   });
@@ -34,13 +36,19 @@ describe.only("Box (Proxy)", function () {
       initializer: "store",
     });
     await this.box.waitForDeployment();
+
+    this.BoxV1Address= await this.box.getAddress();
     console.log('Box Proxy deployed to:', await this.box.getAddress());
+    
+    expect((await this.box.retrieve()).toString()).to.equal("42");
   });
 
   // Test case
   it("retrieve returns a value previously stored", async function () {
     // Test if the returned value is the same one
     // Note that we need to use strings to compare the 256 bit integers
-    expect((await this.box.retrieve()).toString()).to.equal("42");
+    const BoxV2 = await ethers.getContractFactory("BoxV2");
+    const box = await upgrades.upgradeProxy(BOX_ADDRESS, BoxV2);
+    console.log("Box upgraded");
   });
 });

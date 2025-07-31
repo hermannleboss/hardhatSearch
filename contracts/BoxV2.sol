@@ -29,4 +29,8 @@ contract Box {
     function getVersion() public view returns (uint256) {
         return version;
     }
+
+    function viewVersion() public pure returns (uint256) {
+        return 2;
+    }
 }
